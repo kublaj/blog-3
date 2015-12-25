@@ -1,0 +1,51 @@
+{% macro url(resource, site) %}{% spaceless %}
+	{{ resource }}
+{% endspaceless %}{% endmacro %}
+
+{% macro cdn(resource, site) %}{% spaceless %}
+	{{ site.cdn }}{% if site.env == 'prod' %}/v{{ "now"|date('YmdHis') }}{% endif %}{{ resource }}
+{% endspaceless %}{% endmacro %}
+
+{% macro cdnsrc(resource, site) %}{% spaceless %}
+	{% import _self as utils %}
+	src="{{ utils.cdn(resource, site) }}" crossorigin="anonymous"
+{% endspaceless %}{% endmacro %}
+
+{% macro cdnhref(resource, site) %}{% spaceless %}
+	{% import _self as utils %}
+	href="{{ utils.cdn(resource, site) }}" crossorigin="anonymous"
+{% endspaceless %}{% endmacro %}
+
+{% macro cdncontent(resource, site) %}{% spaceless %}
+	{% import _self as utils %}
+	content="{{ utils.cdn(resource, site) }}" crossorigin="anonymous"
+{% endspaceless %}{% endmacro %}
+
+{% macro glyphicon(icon) %}{% spaceless %}
+	<i class="glyphicon glyphicon-{{ icon }}" aria-hidden="true"></i>
+{% endspaceless %}{% endmacro %}
+
+{% macro legal() %}
+	{% import _self as utils %}
+	<div class="alert alert-warning margin-top" role="alert">
+		<div class="media">
+			<div class="media-left">
+				{{ utils.glyphicon('warning-sign') }}
+			</div>
+			<div class="media-body">
+				<h2 class="media-heading">I am not a lawyer!</h2>
+				<p>
+					This post is, at least partially, about legal matters. Even though I do a lot of research, I am
+					not a legal professional and can therefore not give you legal advice. I may be wrong, the legal
+					situation may have changed, or the laws referenced here may not be applicable in your country. Take
+					everything written here with a pinch of salt and <strong>do your own research</strong>.
+				</p>
+				<p>
+					This blog post is provided without warranty, of any kind, either expressed
+					or implied, including, but not limited to, the factual correctness or accuracy of the legal
+					interpretation.
+				</p>
+			</div>
+		</div>
+	</div>
+{% endmacro %}

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Frontend build" default="all">
+    <tstamp/>
+    <property name="build" value="${DSTAMP}${TSTAMP}" />
+
+    <property file=".build.defaults.properties" />
+    <property file=".build.properties" override="true" />
+    <property name="bin" value="./.build/bin" />
+
+    <exec command="ruby -v | awk ' { print $2 } ' | sed -e 's/p.*//' -e 's/\.[0-9]*$/.0/'" outputProperty="rubyVersion" />
+
+    <mkdir dir=".build" />
+    <mkdir dir=".build/tmp" />
+
+    <target name="install">
+        <phingcall target="install-bundler" />
+        <phingcall target="install-bower" />
+    </target>
+
+    <target name="install-prepare">
+        <mkdir dir=".build" />
+        <symlink link=".build/package.json" target="../.package.json" overwrite="true" />
+    </target>
+
+    <target name="install-npm" depends="install-prepare">
+        <exec command="${bin}/npm install --prefix .build/" logoutput="true" checkreturn="true" />
+
+        <foreach target="install-npm-symlink" param="binary">
+            <fileset dir=".build/node_modules/.bin">
+                <include name="**/*" />
+            </fileset>
+        </foreach>
+    </target>
+
+    <target name="install-npm-symlink" hidden="true">
+        <symlink link=".build/bin/${binary}" target="../node_modules/.bin/${binary}" overwrite="true" />
+    </target>
+
+    <target name="install-bower" depends="install-npm">
+        <exec command="${bin}/bower ${bower.action}" logoutput="true" checkreturn="true" />
+    </target>
+
+    <target name="install-bundler">
+        <exec command="bundle install --standalone --path=.build/bundle" logoutput="true" checkreturn="true" />
+
+        <foreach target="install-bundler-symlink" param="binary">
+            <fileset dir=".build/bundle/ruby/${rubyVersion}/bin">
+                <include name="**/*"/>
+            </fileset>
+        </foreach>
+    </target>
+
+    <target name="install-bundler-symlink" hidden="true">
+        <symlink link=".build/bin/${binary}" target="../bundle/ruby/${rubyVersion}/bin/${binary}" overwrite="true" />
+    </target>
+
+    <target name="build">
+        <phingcall target="build-scripts" />
+        <phingcall target="build-fonts" />
+        <phingcall target="build-images" />
+    </target>
+
+    <target name="build-scripts">
+        <phingcall target="build-sass" />
+        <phingcall target="build-js" />
+    </target>
+
+    <target name="build-fonts">
+        <copy todir="source/fonts" overwrite="true">
+            <fileset dir="source/components">
+                <include name="**/fonts/**/*.eot" />
+                <include name="**/fonts/**/*.svg" />
+                <include name="**/fonts/**/*.ttf" />
+                <include name="**/fonts/**/*.woff" />
+                <include name="**/fonts/**/*.woff2" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="build-images">
+        <copy todir="source/img" overwrite="true">
+            <fileset dir="source/components">
+                <include name="**/*.jpg" />
+                <include name="**/*.png" />
+                <include name="**/*.gif" />
+                <include name="**/*.svg" />
+                <exclude name="**/fonts/**/*.svg" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="build-sass">
+        <exec command="GEM_PATH=${application.startdir}/.build/bundle/ruby/${rubyVersion} ${bin}/sass -r sass-css-importer --sourcemap=inline --update ${sassfile}:${destfile} --style compressed ${sassparams}" logoutput="true" checkreturn="true" />
+
+        <reflexive>
+            <fileset dir=".">
+                <include name="${destfile}.map" />
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="${application.startdir}" replace=".." />
+                    <regexp pattern="&quot;../source/components/" replace="&quot;../components/" />
+                    <regexp pattern="&quot;./source/components/" replace="&quot;./components/" />
+                    <regexp pattern="&quot;source/components/" replace="&quot;../components/" />
+                    <regexp pattern="&quot;../source/sass/" replace="&quot;../sass/" />
+                    <regexp pattern="&quot;./source/sass/" replace="&quot;./sass/" />
+                    <regexp pattern="&quot;source/sass/" replace="&quot;../sass/" />
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+    </target>
+
+    <target name="build-js">
+        <basename file="${jstarget}" property="jstarget.basename" />
+        <exec command="${bin}/uglifyjs $(cat .jsbuild.manifest) --source-map-include-sources --source-map ${jstarget}.map --source-map-url ${jstarget.basename}.map --output ${jstarget}" checkreturn="true" logoutput="true" />
+        <reflexive>
+            <fileset dir=".">
+                <include name="${jstarget}.map" />
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="${application.startdir}" replace=".." />
+                    <regexp pattern="&quot;source/components/" replace="&quot;../components/" />
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+    </target>
+
+    <target name="watch">
+        <exec command="${bin}/fsmonitor -q '+*.sass' '+*.scss' '+*.css' '!source/css/*' '+*.js' '!source/js/*.min.js' '!.build' ${bin}/phing build-scripts"
+              passthru="true"/>
+    </target>
+
+    <target name="watch-js">
+        <exec command="${bin}/fsmonitor -q '+*.js' '!js/*.min.js' '!.build' ${bin}/phing build-js" passthru="true"/>
+    </target>
+
+    <target name="watch-css">
+        <exec command="${bin}/fsmonitor -q '+*.sass' '+*.scss' '!.build' ${bin}/phing build-sass" passthru="true"/>
+    </target>
+
+    <target name="tests-install">
+        <property name="chromedriver.version" value="2.20" />
+        <if>
+            <equals arg1="${os.name}" arg2="Darwin" />
+            <then>
+                <property name="chromedriver.url" value="http://chromedriver.storage.googleapis.com/${chromedriver.version}/chromedriver_mac32.zip" />
+            </then>
+            <else>
+                <property name="chromedriver.url" value="http://chromedriver.storage.googleapis.com/${chromedriver.version}/chromedriver_linux64.zip" />
+            </else>
+        </if>
+        <basename file="${chromedriver.url}" property="chromedriver.zipfile" />
+        <available file="bin/${chromedriver.zipfile}" type="file" property="chromedriver.downloaded" />
+        <if>
+            <not><isset property="chromedriver.downloaded" /></not>
+            <then>
+                <exec dir="bin" command="wget ${chromedriver.url}" />
+            </then>
+        </if>
+        <unzip todir="bin" file="bin/${chromedriver.zipfile}" />
+    </target>
+
+    <target name="tests-prepare">
+        <!-- Reset the database -->
+        <exec command="app/console doctrine:database:drop -n --no-ansi --force" logoutput="true" checkreturn="true" />
+        <exec command="app/console doctrine:database:create -n --no-ansi" logoutput="true" checkreturn="true" />
+
+        <!-- Run migrations, load data -->
+        <exec command="app/console doctrine:migrations:migrate -n --no-ansi" logoutput="true" checkreturn="true" />
+        <!--exec command="app/console doctrine:fixtures:load -n - -no-ansi - -append" logoutput="true" checkreturn="true" /-->
+
+        <!-- Create user to run tests with -->
+        <exec command="app/console fos:user:create -n --no-ansi admin app@opsbears.com asdfasdf --super-admin"  logoutput="true" checkreturn="true" />
+    </target>
+
+    <target name="tests-run" depends="tests-install,tests-prepare">
+        <!-- Start webserver -->
+        <exec command="app/console server:stop -n --no-ansi --process-isolation -v 127.0.0.1:8001" logoutput="true" checkreturn="false" />
+        <exec command="scripts/sleep.sh" logoutput="true" checkreturn="true" />
+        <exec command="app/console server:start -n --no-ansi --process-isolation -v 127.0.0.1:8001" logoutput="true" checkreturn="true" spawn="true" />
+        <exec command="scripts/sleep.sh" logoutput="true" checkreturn="true" />
+
+        <!-- Run the tests -->
+        <exec command="bin/phpunit --config phpunit.xml tests"
+              logoutput="true"
+              checkreturn="false" />
+
+        <!-- Stop the webserver -->
+        <exec command="app/console server:stop -n --no-ansi --process-isolation -v 127.0.0.1:8001"
+              logoutput="true"
+              checkreturn="true" />
+    </target>
+
+    <target name="all">
+        <phingcall target="install" />
+        <phingcall target="build" />
+    </target>
+</project>

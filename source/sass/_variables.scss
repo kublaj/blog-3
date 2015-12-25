@@ -1,0 +1,40 @@
+$link-color: #5FB611;
+
+$brand-primary: #458ecc;
+$brand-success: #6ab76d;
+$brand-info: #5bc0de;
+$brand-warning: #faaf3e;
+$brand-danger: #d14d38;
+$brand-dark: #1A5980;
+$brand-light: #FCFCFA;
+
+$font-size-base: 18px;
+
+$brand-background: $brand-light;
+
+$sidebar-background: $brand-dark;
+$sidebar-width: 230px;
+$header-height: 50px;
+$header-padding-vertical: 0;
+$header-padding-horizontal: 0;
+$footer-height: 60px;
+$footer-padding-vertical: 10px;
+$footer-padding-horizontal: 15px;
+
+/* Bootstrap Override */
+
+$btn-primary-border: $brand-primary;
+$btn-success-border: $brand-success;
+$btn-info-border: $brand-info;
+$btn-warning-border: $brand-warning;
+$btn-danger-border: $brand-danger;
+
+$border-radius-base: 2px;
+$border-radius-large: 4px;
+$border-radius-small: 2px;
+
+$state-success-text: $brand-success;
+$state-info-text: $brand-info;
+$state-warning-text: $brand-warning;
+
+$icon-font-path: "../fonts/bootstrap-sass/assets/fonts/bootstrap/";

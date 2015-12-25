@@ -1,0 +1,20 @@
+#!/bin/bash
+
+case $1 in
+	js*)
+		./phing watch-js
+		;;
+	css*)
+		./phing watch-css
+		;;
+	sass*)
+		./phing watch-css
+		;;
+	scss*)
+		./phing watch-css
+		;;
+	**)
+		./phing watch
+		;;
+esac
+exit $?

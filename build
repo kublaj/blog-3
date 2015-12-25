@@ -1,0 +1,20 @@
+#!/bin/bash
+
+case $1 in
+	js*)
+		./phing build-js
+		;;
+	css*)
+		./phing build-sass
+		;;
+	sass*)
+		./phing build-sass
+		;;
+	scss*)
+		./phing build-sass
+		;;
+	**)
+		./phing build
+		;;
+esac
+exit $?

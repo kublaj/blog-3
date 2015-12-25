@@ -1,0 +1,9 @@
+source/components/jquery/dist/jquery.js
+source/components/jquery-cookie/jquery.cookie.js
+source/components/bootstrap-sass/assets/javascripts/bootstrap/affix.js
+source/components/bootstrap-sass/assets/javascripts/bootstrap/transition.js
+source/components/bootstrap-sass/assets/javascripts/bootstrap/alert.js
+source/components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js
+source/js/src/cookieconsent.js
+source/js/src/piwik-integration.js
+source/components/Piwik/js/piwik.js

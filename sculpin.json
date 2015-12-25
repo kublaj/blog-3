@@ -1,0 +1,29 @@
+{
+	"name": "sculpin/blog-skeleton",
+	"description": "A Skeleton for a Sculpin Based Blog",
+	"type": "sculpin-skeleton",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Dragonfly Development Inc.",
+			"email": "info@dflydev.com",
+			"homepage": "http://dflydev.com"
+		},
+		{
+			"name": "Beau Simensen",
+			"email": "beau@dflydev.com",
+			"homepage": "http://beausimensen.com"
+		}
+	],
+	"require": {
+	},
+	"require-dev": {
+		"mouf/nodejs-installer": "1.*",
+		"phing/phing": "^2.12",
+		"se/selenium-server-standalone": "^2.46",
+		"jakoch/phantomjs-installer": "^1.9",
+		"phpunit/phpunit-selenium": "^1.4"
+	},
+	"config": {
+	}
+}

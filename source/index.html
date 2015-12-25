@@ -1,0 +1,49 @@
+---
+layout: default
+title: Home
+generator: pagination
+pagination:
+max_per_page: 3
+generator: [posts_category_index, pagination]
+use:
+- posts
+---
+{% for post in page.pagination.items %}
+<article>
+    <header>
+        <h2><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h2>
+    </header>
+    <div class="excerpt">
+        {{ post.blocks.excerpt|raw }}
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="tags">
+                {% if post.meta.categories %}
+                    {% for category in post.meta.categories %}
+                        <a href="{{ site.url }}/categories/{{ category|url_encode(true) }}" class="label label-primary">
+                            {{ category }}
+                        </a>&nbsp;
+                    {% endfor %}
+                {% endif %}
+                {% if post.meta.tags %}
+                    {% for tag in post.meta.tags %}
+                        <a href="{{ site.url }}/tags/{{ tag|url_encode(true) }}" class="label label-success">
+                            {{ tag }}
+                        </a>&nbsp;
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-sm-6 text-right">
+            <a href="{{ site.url }}{{ post.url }}" class="btn btn-success btn-sm btn-readmore">Read more &raquo;</a>
+        </div>
+    </div>
+</article>
+{% endfor %}
+{% if page.pagination.previous_page or page.pagination.next_page %}
+<nav>
+    {% if page.pagination.previous_page %}<a href="{{ site.url }}{{ page.pagination.previous_page.url }}">Newer Posts</a>{% endif %}<br />
+    {% if page.pagination.next_page %}<a href="{{ site.url }}{{ page.pagination.next_page.url }}">Older Posts</a>{% endif %}<br />
+</nav>
+{% endif %}

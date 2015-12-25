@@ -1,0 +1,56 @@
+#!/bin/bash
+
+echo "Installing bundler..."
+if [ -z "$(which gem)" ]; then
+	echo "You must install rubygems!" >&2
+	exit 1
+else
+	if [ -z "$(which bundler)" ]; then
+		echo "Bundler not found, attempting to install, running 'gem install bundler'"
+		gem install bundler
+		if [ $? -ne 0 ]; then
+			echo "Installing bundler failed!" >&2
+			echo "Please run it yourself:" >&2
+			echo "  gem install bundler" >&2
+			exit 1
+		fi
+	fi
+fi
+
+mkdir -p .build
+mkdir -p .build/bin
+
+echo "Installing sculpin..."
+if [ ! -f .build/bin/sculpin.phar ]; then
+	if [ -n "$(which curl)" ]; then
+		curl -o .build/bin/sculpin https://download.sculpin.io/release/v2.0.0/sculpin.phar
+		if [ $? -ne 0 ]; then
+			echo "Failed to download sculpin!" >&2
+			exit 1
+		fi
+	elif [ -n "$(which wget)" ]; then
+		wget -O .build/bin/sculpin.phar https://download.sculpin.io/release/v2.0.0/sculpin.phar
+			echo "Failed to download sculpin!" >&2
+			exit 1
+	else
+		echo "You need to install either curl or wget!" >&2
+		exit 1
+	fi
+fi
+
+chmod +x .build/bin/sculpin.phar
+ln -sfF sculpin.phar .build/bin/sculpin
+ln -sfF ../sculpin.json .build/sculpin.json
+
+echo "Running sculpin install..."
+.build/bin/sculpin install --dev
+
+echo "Linking sculpin binaries..."
+for binary in $(ls ./.sculpin/bin); do
+	echo " - $binary"
+	ln -sfF ../../.sculpin/bin/$binary .build/bin/$binary
+done
+
+echo "Running phing install..."
+./phing install
+exit $?

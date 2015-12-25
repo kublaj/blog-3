@@ -1,0 +1,102 @@
+{% import "utils.twig" as utils %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{% if page.title is defined %}{{ page.title }} &bull; {% endif %}{{ site.title }}</title>
+		{% block head_meta %}
+			{% import "utils.twig" as utils %}
+			<meta name="robots" content="index, follow" />
+			<meta property="og:type" content="website" />
+			<meta property="og:description" content="Opsbears is an Austrian IT company specializing in Linux server administration and IT operations." />
+			<meta property="og:image" {{ utils.cdncontent('/img/oglogo.png', site) }} />
+			<meta name="description" content="Opsbears is an Austrian IT company specializing in Linux server administration and IT operations." />
+			<meta name="keywords" content="IT, Operations, DevOps, Linux" />
+			<meta name="subject" content="IT operations" />
+		{% endblock %}
+		<meta property="og:url" content="{{ utils.url(page.url, site) }}" />
+		{% if page.title is defined %}<meta property="og:site_name" content="{{ site.title }}" />{% endif %}
+		<meta property="og:title" content="{% if page.title is defined %}{{ page.title }}{% else %}{{ site.title }}{% endif %}" />
+
+		<meta http-equiv="Content-Type" content="text/html" />
+
+		<meta name="language" content="en" />
+		<meta http-equiv="content-language" content="en" />
+
+
+		<link type="text/css" rel="stylesheet" {{ utils.cdnhref('/css/app.css', site) }}>
+		<link rel="icon" type="image/png" {{ utils.cdnhref('/favicon.png', site) }}>
+
+		<link rel="alternate" type="application/atom+xml" href="{{ utils.url('/atom.xml', site) }}"
+			  title="{{ site.title }}" />
+	</head>
+	<body role="document" class="{% block bodyclass %}{% endblock %}">
+		{% block body %}
+			{% import "utils.twig" as utils %}
+			<nav class="navbar" id="navbar-main">
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button"
+								class="navbar-toggle collapsed"
+								data-toggle="collapse"
+								data-target="#navbar"
+								aria-expanded="false"
+								aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="{{ utils.url('/', site) }}">
+							<img {{ utils.cdnsrc('/img/logo-45.png', site) }} alt="{{ site_title }}" />
+						</a>
+					</div>
+					<div class="collapse navbar-collapse" id="navbar">
+						<ul class="nav navbar-nav navbar">
+							<li>
+								<a href="{{ utils.url('/', site) }}">
+									Home
+								</a>
+							</li>
+							<li>
+								<a href="{{ utils.url('/categories/Development', site) }}">
+									Development
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<div class="container">
+				{% block content_wrapper %}{% block content %}{% endblock %}{% endblock %}
+			</div>
+
+			<div class="container">
+				<div class="footer margin-bottom margin-top">
+					<div class="row margin-top">
+						<div class="col-sm-5 text-xs-center text-sm-left">
+							<ul class="list-inline">
+								<li>&copy; 2013&ndash;{{ "now"|date("Y") }} Opsbears</li>
+							</ul>
+						</div>
+						<div class="col-sm-2 text-center hidden-xs">
+							<a href="{{ utils.url('/', site) }}">
+								<img {{ utils.cdnsrc('/img/logo-25.png', site) }} alt="Opsbears" />
+							</a>
+						</div>
+						<div class="col-sm-5 text-xs-center text-sm-right text-right">
+							<ul class="list-inline">
+								<li><a href="{{ utils.url('/cookies', site) }}">Cookies</a></li>
+								<li><a href="{{ utils.url('/privacy', site) }}">Privacy</a></li>
+								<li><a href="{{ utils.url('/imprint', site) }}">Imprint</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endblock %}
+		<script type="text/javascript" {{ utils.cdnsrc('/js/app.min.js', site) }}></script>
+	</body>
+</html>

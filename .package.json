@@ -1,0 +1,9 @@
+{
+  "author": "Janos Pasztor <ops@opsbears.com>",
+  "devDependencies": {
+    "compass": "0.1.*",
+    "bower": "1.*",
+    "uglify-js": "2.4.*",
+    "fsmonitor": "0.2.*"
+  }
+}

@@ -1,0 +1,10 @@
+sculpin:
+    permalink: pretty
+    ignore:
+        - "**/components/**"
+        - "**/sass/**"
+        - "**/js/src/**"
+
+sculpin_content_types:
+    posts:
+        permalink: :year/:month/:day/:filename/

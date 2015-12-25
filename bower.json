@@ -1,0 +1,22 @@
+{
+  "name": "opsbears.com",
+  "version": "1.0.0",
+  "authors": [
+    "Janos Pasztor <janos@pasztor.at>"
+  ],
+  "license": "MIT",
+  "homepage": "https://www.opsbears.com",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "source/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass": "3.*",
+    "jquery-cookie": "1.*",
+    "Noisy": "*",
+    "piwik": "2.*"
+  }
+}
